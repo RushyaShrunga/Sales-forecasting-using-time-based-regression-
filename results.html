@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Department Forecast Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <main class="results-shell">
+        <header class="result-header">
+            <div>
+                <p class="eyebrow">Monthly Department Output</p>
+                <h1>Forecast Results</h1>
+                <p>{{ data_source }} | {{ original_rows }} source rows | {{ monthly_rows }} monthly department rows | {{ department_count }} departments | {{ start_date }} to {{ end_date }}</p>
+            </div>
+            <nav class="actions">
+                <a href="{{ url_for('index') }}">New Upload</a>
+                <a class="primary" href="{{ url_for('download', filename=forecast_filename) }}">Download Forecast CSV</a>
+            </nav>
+        </header>
+
+        {% if skipped_departments %}
+        <section class="notice">
+            <strong>Skipped departments:</strong>
+            {{ skipped_departments | join("; ") }}
+        </section>
+        {% endif %}
+
+        {% for section in sections %}
+        <section class="department-block">
+            <div class="department-title">
+                <div>
+                    <p class="eyebrow">Department</p>
+                    <h2>{{ section.department }}</h2>
+                </div>
+                <div class="model-chip">{{ section.best_model_name }}</div>
+            </div>
+
+            <div class="snapshot">
+                <div>
+                    <span>History</span>
+                    <strong>{{ section.history_months }} months</strong>
+                </div>
+                <div>
+                    <span>Start</span>
+                    <strong>{{ section.start_date }}</strong>
+                </div>
+                <div>
+                    <span>End</span>
+                    <strong>{{ section.end_date }}</strong>
+                </div>
+            </div>
+
+            <div class="metrics-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>MAE</th>
+                            <th>RMSE</th>
+                            <th>MAPE %</th>
+                            <th>R2 Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in section.results %}
+                        <tr>
+                            <td>{{ row.model }}</td>
+                            <td>{{ row.mae }}</td>
+                            <td>{{ row.rmse }}</td>
+                            <td>{{ row.mape_percent }}</td>
+                            <td>{{ row.r2_score }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <img class="bar-chart" src="{{ url_for('static', filename=section.chart_filename) }}" alt="{{ section.department }} bar chart">
+
+            <div class="forecast-table">
+                <h3>Forecasted Monthly Sales</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Forecasted Sales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in section.forecast %}
+                        <tr>
+                            <td>{{ row.date }}</td>
+                            <td>{{ row.forecasted_sales }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endfor %}
+    </main>
+</body>
+</html>

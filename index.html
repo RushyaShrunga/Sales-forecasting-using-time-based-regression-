@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Department Sales Forecaster</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <main class="workspace">
+        <aside class="rail">
+            <div class="logo">DS</div>
+            <p class="rail-label">Monthly Forecast Studio</p>
+            <h1>Department Sales Forecaster</h1>
+            <p class="rail-copy">Train monthly regression models for individual departments and review the future sales bars.</p>
+            <div class="schema">
+                <span>Required CSV</span>
+                <strong>date</strong>
+                <strong>department</strong>
+                <strong>sales</strong>
+            </div>
+        </aside>
+
+        <section class="stage">
+            <div class="stage-head">
+                <p class="eyebrow">Regression Console</p>
+                <h2>Upload department sales data</h2>
+                <p>Use monthly data directly, or upload daily transaction totals. The app converts everything into monthly department totals before forecasting.</p>
+            </div>
+
+            {% if error %}
+            <div class="alert">{{ error }}</div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" class="forecast-form">
+                <div class="input-zone">
+                    <label for="sales_file">CSV dataset</label>
+                    <input id="sales_file" name="sales_file" type="file" accept=".csv">
+                    <span>Leave empty to run the built-in department sample.</span>
+                </div>
+
+                <div class="form-grid">
+                    <label>
+                        <span>Department filter</span>
+                        <input name="department" type="text" placeholder="Blank = all departments">
+                    </label>
+                    <label>
+                        <span>Months to forecast</span>
+                        <input name="periods" type="number" min="1" max="24" value="6">
+                    </label>
+                </div>
+
+                <button type="submit">Generate Department Forecast</button>
+            </form>
+
+            <div class="example">
+                <h3>Example rows</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>date</th>
+                            <th>department</th>
+                            <th>sales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2023-01-01</td>
+                            <td>Electronics</td>
+                            <td>42800</td>
+                        </tr>
+                        <tr>
+                            <td>2023-01-01</td>
+                            <td>Furniture</td>
+                            <td>31650</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
